@@ -4,21 +4,27 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from 'next/link'
+import {useLogin} from "@/hooks/auth";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const login = useLogin();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // symulacja logowania
-    setTimeout(() => {
+
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.error(err);
+      // TODO: toast / komunikat błędu
+    } finally {
       setIsLoading(false);
-    }, 1800);
+    }
   };
 
   return (
