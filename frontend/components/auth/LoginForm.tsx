@@ -78,7 +78,7 @@ export default function LoginForm() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="email@fittrack.pl"
+                placeholder="Email"
                 className={`
                   w-full pl-11 pr-4 py-4 rounded-2xl
                   bg-white/5 border border-white/10
@@ -104,7 +104,7 @@ export default function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="Hasło"
                 className={`
                   w-full pl-11 pr-12 py-4 rounded-2xl
                   bg-white/5 border border-white/10
