@@ -19,9 +19,9 @@ export function DateScroller({ selectedDate, onDateChange }: DateScrollerProps) 
   const days = useMemo(() => {
     const today = new Date()
     const start = new Date(today)
-    start.setDate(today.getDate() - 30)
+    start.setDate(today.getDate() - 60)
 
-    return Array.from({ length: 61 }, (_, i) => {
+    return Array.from({ length: 121 }, (_, i) => {
       const d = new Date(start)
       d.setDate(start.getDate() + i)
       return d
@@ -144,7 +144,12 @@ export function DateScroller({ selectedDate, onDateChange }: DateScrollerProps) 
 
   return (
     <div className="relative mb-10">
-      <div className="w-full rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden">
+      <div className="w-full rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden relative">
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          <div className="h-3/4 w-px bg-gradient-to-b from-transparent via-emerald-400/70 via-50% to-transparent shadow-[0_0_8px_2px_rgba(52,211,153,0.4)]" />
+          <div className="absolute top-2.5 w-6 h-1 rounded-full bg-gradient-to-r from-emerald-400/30 via-emerald-400/80 to-emerald-400/30 shadow-lg shadow-emerald-500/40" />
+        </div>
+
         <div
           ref={scrollRef}
           className="
@@ -154,6 +159,7 @@ export function DateScroller({ selectedDate, onDateChange }: DateScrollerProps) 
             scrollbar-hide
             select-none touch-pan-x
             cursor-grab active:cursor-grabbing
+            relative z-0
           "
         >
           {days.map((day) => {
@@ -169,7 +175,7 @@ export function DateScroller({ selectedDate, onDateChange }: DateScrollerProps) 
                   onDateChange(new Date(day))
                 }}
                 className={cn(
-                  "flex min-w-[76px] shrink-0 flex-col items-center justify-center rounded-lg px-3 py-4 text-sm transition-all snap-center pointer-events-auto",
+                  "flex min-w-[76px] shrink-0 flex-col items-center justify-center rounded-lg px-3 py-4 text-sm transition-all snap-center pointer-events-auto min-h-[100px]",
                   isSelected
                     ? "bg-gradient-to-b from-emerald-600 to-emerald-800 shadow-lg shadow-emerald-900/50 text-white font-medium"
                     : isToday
@@ -181,7 +187,9 @@ export function DateScroller({ selectedDate, onDateChange }: DateScrollerProps) 
                   {day.toLocaleDateString('pl-PL', { weekday: 'short' })}
                 </span>
                 <span className="text-2xl font-bold">{day.getDate()}</span>
-                {isToday && <span className="mt-2 h-2.5 w-2.5 rounded-full bg-emerald-400" />}
+                <div className="mt-2 h-2.5 w-2.5 flex items-center justify-center">
+                  {isToday && <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />}
+                </div>
               </motion.button>
             )
           })}
