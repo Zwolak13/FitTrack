@@ -5,11 +5,12 @@ import Layout from "@/components/auth/Layout";
 export default function LoginPage() {
   return (
     
-      <Layout>
-        <AuthCard>
-            <LoginForm />
-        </AuthCard>
-      </Layout>
+      
+        <Layout>
+          <AuthCard>
+              <LoginForm />
+          </AuthCard>
+        </Layout>
 
   );
 }

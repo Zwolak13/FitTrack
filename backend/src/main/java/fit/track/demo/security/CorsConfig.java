@@ -1,0 +1,4 @@
+package fit.track.demo.security;
+
+public class CorsConfig {
+}

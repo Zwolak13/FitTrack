@@ -1,3 +1,4 @@
+import { API_ENDPOINTS, API_URL } from "@/config/api";
 import { useAuth } from "@/context/AuthContext";
 
 let isRefreshing = false;
@@ -28,10 +29,10 @@ export async function fetchWithAuth(
   isRefreshing = true;
 
   try {
-    const refresh = await fetch("/api/auth/refresh", {
-      method: "POST",
-      credentials: "include",
-    });
+    const refresh = await fetch(`${API_URL}${API_ENDPOINTS.refresh}`, {
+                  method: "POST",
+                  credentials: "include", 
+             });
 
     if (!refresh.ok) throw new Error();
 

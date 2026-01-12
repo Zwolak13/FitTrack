@@ -4,11 +4,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import Link from 'next/link'
+import { useToast } from "../ToastProvider";
+import { useRegister } from "@/hooks/auth";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const register = useRegister();
+
+  const {error, success } = useToast();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -18,15 +24,38 @@ export default function RegisterForm() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+      setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      error({ title: "Błąd", description: "Hasła nie są takie same!" });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await register(formData.username, formData.email, formData.password);
+
+      success({ title: "Sukces!", description: "Konto zostało utworzone." });
+
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+    } catch (err: any) {
+      error({ title: "Błąd", description: err.message || "Coś poszło nie tak" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) return;
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1800);
-  };
 
   return (
     <div className="relative w-full max-w-md px-5 py-10 md:p-0">

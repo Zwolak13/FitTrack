@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import Link from 'next/link'
 import {useLogin} from "@/hooks/auth";
+import { useToast } from "../ToastProvider";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,8 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const login = useLogin();
 
+  const { success, error } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -20,8 +23,7 @@ export default function LoginForm() {
     try {
       await login(email, password);
     } catch (err) {
-      console.error(err);
-      // TODO: toast / komunikat błędu
+      error({ title: "Błąd!", description: "Nie udało się zalogować." });
     } finally {
       setIsLoading(false);
     }
