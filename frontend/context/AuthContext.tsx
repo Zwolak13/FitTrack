@@ -1,5 +1,6 @@
 "use client";
 
+import { API_ENDPOINTS, API_URL } from "@/config/api";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
@@ -21,10 +22,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = async () => {
     try {
-      const res = await fetch("/api/auth/refresh", {
-        method: "POST",
-        credentials: "include",
-      });
+      const res = await fetch(`${API_URL}${API_ENDPOINTS.refresh}`, {
+              method: "POST",
+              credentials: "include", 
+            });
 
       if (!res.ok) throw new Error();
       const data = await res.json();

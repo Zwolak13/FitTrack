@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { useLogout } from '@/hooks/auth'
 
 interface DrawerMenuProps {
   open: boolean
@@ -9,6 +10,8 @@ interface DrawerMenuProps {
 }
 
 export function DrawerMenu({ open, onOpenChange }: DrawerMenuProps) {
+  const logout = useLogout();
+
   if (!open) return null
 
   return (
@@ -35,15 +38,32 @@ export function DrawerMenu({ open, onOpenChange }: DrawerMenuProps) {
           </div>
 
           <nav className="space-y-2">
-            {['Profil', 'Historia', 'Statystyki', 'Ustawienia', 'Wyloguj się'].map((item) => (
-              <Button
-                key={item}
+            <Button
                 variant="ghost"
                 className="w-full justify-start text-zinc-300 hover:text-white hover:bg-white/5"
               >
-                {item}
-              </Button>
-            ))}
+                Profil
+            </Button>
+            <Button
+                variant="ghost"
+                className="w-full justify-start text-zinc-300 hover:text-white hover:bg-white/5"
+              >
+                Statystyki
+            </Button>
+            <Button
+                variant="ghost"
+                className="w-full justify-start text-zinc-300 hover:text-white hover:bg-white/5"
+              >
+                Ustawienia
+            </Button>
+            <Button
+                variant="ghost"
+                className="w-full justify-start text-zinc-300 hover:text-white hover:bg-white/5"
+                onClick={() => logout()}
+              >
+                Wyloguj
+            </Button>
+
           </nav>
         </div>
       </motion.div>

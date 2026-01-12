@@ -1,25 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { API_URL, API_ENDPOINTS } from "@/config/api";
 
 export function useRegister() {
-  const { setAccessToken } = useAuth();
   const router = useRouter();
 
-  return async (email: string, password: string) => {
+  return async (username: string, email: string, password: string) => {
     const res = await fetch(`${API_URL}${API_ENDPOINTS.register}`, {
       method: "POST",
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, email, password }),
     });
 
-    if (!res.ok) throw new Error("Register failed");
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Register failed");
+    }
 
-    const data = await res.json();
-    setAccessToken(data.accessToken);
-    router.replace("/dashboard");
+    router.replace("/login");
   };
 }
