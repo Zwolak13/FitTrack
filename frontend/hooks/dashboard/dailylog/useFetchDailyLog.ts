@@ -1,22 +1,25 @@
 "use client";
 
-import { API_URL, API_ENDPOINTS } from "@/config/api";
-import { useAuth } from "@/context/AuthContext";
+import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '@/context/AuthContext'
+import { API_URL, API_ENDPOINTS } from '@/config/api'
 
-export function useFetchDailyLog() {
-  const { accessToken } = useAuth();
+export function useFetchDailyLog(date: string) {
+  const { accessToken } = useAuth()
 
-  return async (date: string) => {
-    if (!accessToken) throw new Error("No access token");
+  return useQuery({
+    queryKey: ['dailyLog', date],
+    queryFn: async () => {
+      if (!accessToken) throw new Error('No access token')
 
-    const res = await fetch(`${API_URL}${API_ENDPOINTS.dailyLog}/${date}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch daily log");
-    return res.json();
-  };
+      const res = await fetch(`${API_URL}${API_ENDPOINTS.dailyLog}/${date}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      if (!res.ok) throw new Error('Failed to fetch daily log')
+      return res.json()
+    },
+    staleTime: 1000 * 250, 
+  })
 }
+
+

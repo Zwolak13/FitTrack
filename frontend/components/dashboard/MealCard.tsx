@@ -51,10 +51,29 @@ export function MealCard({ meal, onAddMeal }: MealCardProps) {
                 {mi.ingredient.name} ({mi.quantity})
               </span>
               <span className="font-medium text-emerald-400">
-                {Math.round(
-                  mi.ingredient.caloriesPer100g * (mi.quantity / 100)
-                )}{" "}
-                kcal
+                {meal.user !== null &&
+                <>
+                  <span>
+                  {mi.ingredient.caloriesPer100g * mi.quantity} kcal 
+                </span>
+                {" "}
+                  <span className="text-orange-600">
+                    {mi.ingredient.carbsPer100g * mi.quantity}gW
+                  </span>
+                  {" "}
+                  <span className="text-white">
+                    {mi.ingredient.proteinPer100g * mi.quantity}gB
+                  </span>
+
+                  {" "}
+                  <span className="text-yellow-200">
+                    {mi.ingredient.fatPer100g * mi.quantity}gT
+                  </span>
+                </>
+            
+                }
+                
+                
               </span>
             </div>
           ))

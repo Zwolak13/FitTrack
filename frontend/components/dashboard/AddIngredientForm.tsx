@@ -13,7 +13,7 @@ interface AddIngredientFormProps {
 }
 
 export function AddIngredientForm({ meal,date, onAdded }: AddIngredientFormProps) {
-  const { addCustomIngredient, loading } = useAddCustomIngredient(meal.id)
+  const addCustomIngredient = useAddCustomIngredient(meal.id)
   const { toast } = useToast()
   const [name, setName] = useState("")
   const [calories, setCalories] = useState("")
@@ -44,7 +44,7 @@ export function AddIngredientForm({ meal,date, onAdded }: AddIngredientFormProps
 }
 
     try {
-      await addCustomIngredient(ingredient)
+      await addCustomIngredient.mutateAsync(ingredient)
 
       setName("")
       setCalories("")
@@ -109,9 +109,9 @@ export function AddIngredientForm({ meal,date, onAdded }: AddIngredientFormProps
       <Button
         type="submit"
         className="w-full bg-emerald-600 hover:bg-emerald-500"
-        disabled={loading}
+        disabled={addCustomIngredient.isPending}
       >
-        {loading ? "Dodawanie..." : "Dodaj"}
+        {addCustomIngredient.isPending ? "Dodawanie..." : "Dodaj"}
       </Button>
     </form>
   )

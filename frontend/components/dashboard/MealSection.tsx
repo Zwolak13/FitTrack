@@ -2,47 +2,23 @@
 
 import { motion } from "framer-motion"
 import { MealCard } from "./MealCard"
-import { useEffect, useState } from "react"
+import { AddMealModal } from "./AddMealModal"
+import { useState } from "react"
 import { useFetchDailyLog } from "@/hooks/dashboard/dailylog/useFetchDailyLog"
 import { Meal } from "@/types/meals"
-import { AddMealModal } from "./AddMealModal"
 
 interface MealSectionProps {
   selectedDate: Date
 }
 
 export function MealSection({ selectedDate }: MealSectionProps) {
-  const fetchDailyLog = useFetchDailyLog()
-  const [meals, setMeals] = useState<Meal[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data, isLoading, isError, error } = useFetchDailyLog(selectedDate.toISOString().slice(0, 10))
   const [activeMeal, setActiveMeal] = useState<Meal | null>(null)
 
-  useEffect(() => {
-    let isMounted = true
+  if (isLoading) return <p>Ładowanie posiłków...</p>
+  if (isError) return <p className="text-red-500">Błąd: {(error as Error).message}</p>
 
-    const load = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await fetchDailyLog(selectedDate.toISOString().slice(0, 10))
-        if (!isMounted) return
-        setMeals(data.meals)
-      } catch (err: any) {
-        if (!isMounted) return
-        setError(err.message)
-      } finally {
-        if (!isMounted) return
-        setLoading(false)
-      }
-    }
-
-    load()
-    return () => { isMounted = false }
-  }, [selectedDate])
-
-  if (loading) return <p>Ładowanie posiłków...</p>
-  if (error) return <p className="text-red-500">Błąd: {error}</p>
+  const meals: Meal[] = data?.meals ?? []
 
   return (
     <div className="space-y-6">
@@ -64,10 +40,7 @@ export function MealSection({ selectedDate }: MealSectionProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
         >
-          <MealCard
-            meal={meal}
-            onAddMeal={() => setActiveMeal(meal)}
-          />
+          <MealCard meal={meal} onAddMeal={() => setActiveMeal(meal)} />
         </motion.div>
       ))}
 

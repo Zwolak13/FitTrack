@@ -1,19 +1,28 @@
-"use client";
+"use client"
 
-import { API_URL, API_ENDPOINTS } from "@/config/api";
-import { useAuth } from "@/context/AuthContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useAuth } from "@/context/AuthContext"
+import { API_URL, API_ENDPOINTS } from "@/config/api"
 
-export function useDeleteIngredient() {
-  const { accessToken } = useAuth();
+export function useDeleteIngredient(type: "all" | "mine") {
+  const { accessToken } = useAuth()
+  const queryClient = useQueryClient()
 
-  return async (id: number) => {
-    if (!accessToken) throw new Error("No access token");
+  return useMutation({
+    mutationFn: async (ingredientId: number) => {
+      if (!accessToken) throw new Error("No access token")
 
-    const res = await fetch(`${API_URL}${API_ENDPOINTS.ingredients}/${id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${accessToken}` },
-    });
+      const res = await fetch(`${API_URL}${API_ENDPOINTS.ingredients}/${ingredientId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
 
-    if (!res.ok) throw new Error("Failed to delete ingredient");
-  };
+      if (!res.ok) throw new Error("Nie udało się usunąć składnika")
+      return ingredientId
+    },
+    onSuccess: () => {
+      const key = type === "mine" ? [API_ENDPOINTS.ingredients, "mine"] : [API_ENDPOINTS.ingredients]
+      queryClient.invalidateQueries({ queryKey: key })
+    },
+  })
 }

@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { API_URL, API_ENDPOINTS } from "@/config/api"
+import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/context/AuthContext"
-import { fetchWithAuth } from "@/lib/fetchWithAuth"
+import { API_URL, API_ENDPOINTS } from "@/config/api"
 
 export interface Ingredient {
   id: number
@@ -18,48 +17,27 @@ export interface Ingredient {
 }
 
 export function useFetchIngredients(type: "all" | "mine", query?: string) {
-  const { accessToken, setAccessToken } = useAuth()
-  const [ingredients, setIngredients] = useState<Ingredient[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { accessToken } = useAuth()
 
-  useEffect(() => {
-    if (!accessToken) return
+  return useQuery<Ingredient[], Error>({
+    queryKey: ["ingredients", type, query],
+    queryFn: async () => {
+      if (!accessToken) throw new Error("No access token")
 
-    const controller = new AbortController()
+      const base =
+        type === "mine"
+          ? `${API_URL}${API_ENDPOINTS.ingredients}/mine`
+          : `${API_URL}${API_ENDPOINTS.ingredients}`
 
-    const run = async () => {
-      try {
-        setLoading(true)
-        setError(null)
+      const url = query ? `${base}?q=${encodeURIComponent(query)}` : base
 
-        const base =
-          type === "mine"
-            ? `${API_URL}${API_ENDPOINTS.ingredients}/mine`
-            : `${API_URL}${API_ENDPOINTS.ingredients}`
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
 
-        const url = query ? `${base}?q=${encodeURIComponent(query)}` : base
-
-        const res = (await fetchWithAuth(
-          url,
-          { signal: controller.signal },
-          () => accessToken,
-          setAccessToken
-        )) as Response
-
-        if (!res.ok) throw new Error("Fetch failed")
-
-        setIngredients(await res.json())
-      } catch (e: any) {
-        if (e.name !== "AbortError") setError(e.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    run()
-    return () => controller.abort()
-  }, [type, query, accessToken, setAccessToken])
-
-  return { ingredients, loading, error }
+      if (!res.ok) throw new Error("Fetch failed")
+      return res.json()
+    },
+    staleTime: 1000 * 60,
+  })
 }

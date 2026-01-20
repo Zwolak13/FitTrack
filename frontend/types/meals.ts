@@ -30,6 +30,9 @@ export interface Meal {
   protein: number
   carbs: number
   fat: number
+  user: {
+    username: string,
+  };
 }
 
 export interface DailyLog {

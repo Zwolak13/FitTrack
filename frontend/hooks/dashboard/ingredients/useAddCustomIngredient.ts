@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { API_URL, API_ENDPOINTS } from "@/config/api"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { MealType } from "@/types/meals"
 
 export interface NewIngredient {
@@ -11,20 +11,16 @@ export interface NewIngredient {
   protein: number
   carbs: number
   fat: number
-  mealType: MealType,
-  date: Date,
+  mealType: MealType
+  date: Date
 }
 
 export function useAddCustomIngredient(mealId: number) {
   const { accessToken } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
-  const addCustomIngredient = async (ingredient: NewIngredient) => {
-    setLoading(true)
-    setError(null)
-
-    try {
+  return useMutation({
+    mutationFn: async (ingredient: NewIngredient) => {
       const res = await fetch(`${API_URL}${API_ENDPOINTS.mealIngredients}/add-custom?mealId=${mealId}`, {
         method: "POST",
         headers: {
@@ -35,16 +31,13 @@ export function useAddCustomIngredient(mealId: number) {
       })
 
       if (!res.ok) throw new Error("Nie udało się dodać składnika")
+      return res.json()
+    },
+    onSuccess: (_, ingredient) => {
+      queryClient.invalidateQueries({
+        queryKey: ['dailyLog', ingredient.date.toISOString().slice(0, 10)]
+      })
 
-      return await res.json()
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message)
-      else setError("Nieznany błąd")
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return { addCustomIngredient, loading, error }
+    },
+  })
 }

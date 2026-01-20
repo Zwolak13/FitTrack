@@ -43,11 +43,11 @@ export function AddMealModal({ open, onClose,date, meal }: AddMealModalProps) {
           </TabsList>
 
           <TabsContent value="all" className="mt-4 flex-1 overflow-y-auto">
-            <IngredientList type="all" />
+            <IngredientList type="all" mealId={meal.id} date={date.toISOString().slice(0, 10)}/>
           </TabsContent>
 
           <TabsContent value="mine" className="mt-4 flex-1 overflow-y-auto">
-            <IngredientList type="mine" />
+            <IngredientList type="mine" mealId={meal.id} date={date.toISOString().slice(0, 10)}/>
           </TabsContent>
 
           <TabsContent value="new" className="mt-4 flex-1 overflow-y-auto">
