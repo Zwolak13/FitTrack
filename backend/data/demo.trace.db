@@ -1,0 +1,12 @@
+2026-01-19 15:51:45.526251+01:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Błąd składniowy w wyrażeniu SQL "[*]INGREDIENTS"; oczekiwano "INSERT"
+Syntax error in SQL statement "[*]INGREDIENTS"; expected "INSERT"; SQL statement:
+INGREDIENTS [42001-240]
+2026-01-19 18:14:24.235576+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Błąd składniowy w wyrażeniu SQL "[*]dropa database"; oczekiwano "DELETE, DROP"
+Syntax error in SQL statement "[*]dropa database"; expected "DELETE, DROP"; SQL statement:
+dropa database [42001-240]
+2026-01-19 18:14:29.001542+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Błąd składniowy w wyrażeniu SQL "drop [*]database"; oczekiwano "TABLE, INDEX, USER, SEQUENCE, CONSTANT, TRIGGER, MATERIALIZED, VIEW, ROLE, ALIAS, SCHEMA, ALL OBJECTS, DOMAIN, TYPE, AGGREGATE, SYNONYM"
+Syntax error in SQL statement "drop [*]database"; expected "TABLE, INDEX, USER, SEQUENCE, CONSTANT, TRIGGER, MATERIALIZED, VIEW, ROLE, ALIAS, SCHEMA, ALL OBJECTS, DOMAIN, TYPE, AGGREGATE, SYNONYM"; SQL statement:
+drop database [42001-240]

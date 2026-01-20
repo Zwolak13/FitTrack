@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { DateScroller } from '@/components/dashboard/date-scroller'
-import { MealSection } from '@/components/dashboard/meal-section'
-import { DrawerMenu } from '@/components/dashboard/drawer-menu'
+import { DateScroller } from '@/components/dashboard/DateScroller'
+import { MealSection } from '@/components/dashboard/MealSection'
+import { DrawerMenu } from '@/components/dashboard/DrawerMenu'
 import { Menu } from 'lucide-react'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoutes'
 
 export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date())

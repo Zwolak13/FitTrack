@@ -5,4 +5,8 @@ export const API_ENDPOINTS = {
   register: "/auth/register",
   refresh: "/auth/refresh",
   logout: "/auth/logout",
+  
+  ingredients: "/ingredients",
+  mealIngredients: "/meal-ingredients",
+  dailyLog: "/daily-log",
 };

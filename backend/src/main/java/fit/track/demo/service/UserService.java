@@ -18,11 +18,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // zapis użytkownika przy rejestracji
-    public User save(String email, String hashedPassword) {
+
+    public User save(String username, String email, String password) {
         User user = new User();
+        user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(hashedPassword);
+        user.setPassword(passwordEncoder.encode(password)); 
         return userRepository.save(user);
     }
 

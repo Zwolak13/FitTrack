@@ -1,19 +1,18 @@
 package fit.track.demo.model.enums;
 
 public enum Unit {
-
-    GRAM("g"),
-    MILLILITER("ml"),
-    PIECE("pcs");
+    GRAM("g", true),
+    MILLILITER("ml", false),
+    PIECE("pcs", false);
 
     private final String symbol;
+    private final boolean massBased;
 
-    Unit(String symbol) {
+    Unit(String symbol, boolean massBased) {
         this.symbol = symbol;
+        this.massBased = massBased;
     }
 
-    public String getSymbol() {
-        return symbol;
-    }
+    public String getSymbol() { return symbol; }
+    public boolean isMassBased() { return massBased; }
 }
-

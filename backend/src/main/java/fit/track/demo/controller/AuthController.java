@@ -55,35 +55,29 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @RequestBody RegisterRequest request,
-            HttpServletResponse response
-    ) {
-        // sprawdzamy czy istnieje użytkownik
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            return ResponseEntity
-                    .status(409)
-                    .body("Email already exists");
-        }
+        public ResponseEntity<?> register(@RequestBody RegisterRequest request) {       
+    if (userRepository.findByEmail(request.email()).isPresent()) {
+        return ResponseEntity.status(409).body("Email already exists");
+    }
 
-        // zapis użytkownika i hashowanie w serwisie
-        userService.save(request.email(), request.password());
+    userService.save(request.username(), request.email(), request.password());
 
-        // generujemy tokeny jak przy logowaniu
-        String accessToken = jwtUtil.generateAccessToken(request.email());
-        String refreshToken = jwtUtil.generateRefreshToken(request.email());
+    return ResponseEntity.ok("User registered successfully");
+}
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
                 .path("/auth/refresh")
-                .maxAge(7 * 24 * 60 * 60)
+                .maxAge(0)
                 .sameSite("Strict")
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return ResponseEntity.ok(new AuthResponse(accessToken));
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+        return ResponseEntity.ok("Logged out successfully");
     }
+
 
 
     @PostMapping("/refresh")
