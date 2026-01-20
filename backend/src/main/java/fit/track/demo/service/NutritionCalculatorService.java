@@ -16,11 +16,19 @@ public class NutritionCalculatorService {
 
         for (MealIngredient mi : meal.getIngredients()) {
             Ingredient i = mi.getIngredient();
-            BigDecimal grams = mi.getQuantity().multiply(i.getGramsPerUnit());
-            calories = calories.add(calc(grams, i.getCaloriesPer100g()));
-            protein = protein.add(calc(grams, i.getProteinPer100g()));
-            carbs = carbs.add(calc(grams, i.getCarbsPer100g()));
-            fat = fat.add(calc(grams, i.getFatPer100g()));
+
+            if (i.isGlobal()) {
+                BigDecimal grams = mi.getQuantity().multiply(i.getGramsPerUnit());
+                calories = calories.add(calc(grams, i.getCaloriesPer100g(), true));
+                protein = protein.add(calc(grams, i.getProteinPer100g(), true));
+                carbs = carbs.add(calc(grams, i.getCarbsPer100g(), true));
+                fat = fat.add(calc(grams, i.getFatPer100g(), true));
+            } else {
+                calories = calories.add(i.getCaloriesPer100g());
+                protein = protein.add(i.getProteinPer100g());
+                carbs = carbs.add(i.getCarbsPer100g());
+                fat = fat.add(i.getFatPer100g());
+            }
         }
 
         meal.setCalories(calories);
@@ -48,8 +56,13 @@ public class NutritionCalculatorService {
         log.setTotalFat(fat);
     }
 
-    private BigDecimal calc(BigDecimal grams, BigDecimal per100) {
-        return grams.multiply(per100)
-                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+    private BigDecimal calc(BigDecimal grams, BigDecimal per100, boolean isGlobal) {
+        if (isGlobal) {
+
+            return grams.multiply(per100).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+        } else {
+            return per100;
+        }
     }
+
 }

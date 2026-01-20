@@ -56,7 +56,7 @@ public class MealIngredientController {
         ingredient.setCarbsPer100g(request.getCarbs());
         ingredient.setFatPer100g(request.getFat());
         ingredient.setGramsPerUnit(BigDecimal.ONE);
-        ingredient.setUnit(Unit.GRAM); // <-- bardzo ważne
+        ingredient.setUnit(Unit.GRAM);
         if (request.isAddToUserIngredients()) ingredient.setUser(user);
 
         ingredientRepository.save(ingredient);
@@ -75,5 +75,61 @@ public class MealIngredientController {
 
         return ResponseEntity.ok(new MealIngredientResponse(mi));
     }
+
+    @DeleteMapping("/{mealIngredientId}")
+    public ResponseEntity<Void> deleteMealIngredient(
+            @PathVariable Long mealIngredientId,
+            Authentication auth
+    ) {
+        User user = userService.findByEmail(auth.getName()).orElseThrow();
+        MealIngredient mi = mealIngredientRepository.findById(mealIngredientId)
+                .orElseThrow(() -> new RuntimeException("MealIngredient not found"));
+
+        DailyLog dailyLog = mi.getMeal().getDailyLog();
+        Meal meal = mi.getMeal();
+
+        meal.getIngredients().remove(mi);
+        mealIngredientRepository.delete(mi);
+
+        nutritionCalculatorService.recalculateMeal(meal);
+        nutritionCalculatorService.recalculateDay(dailyLog);
+        mealRepository.save(meal);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<MealIngredientResponse> addExistingIngredient(
+            @RequestParam Long mealId,
+            @RequestParam Long ingredientId,
+            @RequestParam BigDecimal quantity,
+            Authentication auth
+    ) {
+        User user = userService.findByEmail(auth.getName()).orElseThrow();
+
+        Meal meal = mealRepository.findById(mealId)
+                .orElseThrow(() -> new RuntimeException("Meal not found"));
+
+        DailyLog dailyLog = meal.getDailyLog();
+
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+
+        MealIngredient mi = new MealIngredient();
+        mi.setMeal(meal);
+        mi.setIngredient(ingredient);
+        mi.setQuantity(quantity);
+
+        mealIngredientRepository.save(mi);
+
+        meal.getIngredients().add(mi);
+        nutritionCalculatorService.recalculateMeal(meal);
+        nutritionCalculatorService.recalculateDay(dailyLog);
+        mealRepository.save(meal);
+
+        return ResponseEntity.ok(new MealIngredientResponse(mi));
+    }
+
+
 
 }
