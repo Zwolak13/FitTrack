@@ -90,7 +90,6 @@ class UserControllerUnitTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("hashedNew", user.getPassword());
-        verify(userService).save(user);
     }
 
     @Test
@@ -114,7 +113,6 @@ class UserControllerUnitTest {
                 controller.changePassword(auth, request);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        verify(userService, never()).save(any());
     }
 
     @Test

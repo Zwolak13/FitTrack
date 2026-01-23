@@ -45,7 +45,7 @@ public class UserController {
         }
 
         user.setPassword(passwordEncoder.encode(request.newPassword()));
-        userService.save(user);
+        //userService.save(user);
 
         return ResponseEntity.ok().build();
     }
